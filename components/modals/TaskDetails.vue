@@ -5,20 +5,27 @@ import MultiSelect from '~/components/MultiSelect.vue'
 import type { Task, Status } from '~/utils/types'
 
 const props = defineProps<{
-  open: boolean,
+  task: Task | undefined,
   availableStatuses: Status[],
   availableTags: string[],
 }>()
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'createTask', task: Omit<Task, 'id'>): void
+  (e: 'updateTask', task: Task): void
 }>()
 
 const modal = ref<HTMLDialogElement | undefined>()
 
-watch(() => props.open, (open) => {
-  if (open) {
+const title = ref('')
+const status = ref('')
+const tags = ref<string[]>([])
+
+watch(() => props.task, (task) => {
+  if (task) {
     modal.value?.showModal()
+    title.value = task.title
+    status.value = props.availableStatuses.find(status => task.status === status.id)?.name ?? ''
+    tags.value = task.tags
   } else {
     modal.value?.close()
   }
@@ -30,12 +37,12 @@ function keydown(event: KeyboardEvent) {
   }
 }
 
-const title = ref('')
-const status = ref('')
-const tags = ref<string[]>([])
-
 function submit() {
-  emit('createTask', {
+  if (!props.task) {
+    return
+  }
+  emit('updateTask', {
+    id: props.task.id,
     title: title.value,
     tags: tags.value,
     status: status.value
@@ -74,7 +81,7 @@ function submit() {
       <div />
 
       <button type="submit">
-        Create
+        Update
       </button>
     </form>
   </dialog>

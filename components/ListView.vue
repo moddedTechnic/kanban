@@ -4,7 +4,8 @@ import type { Task } from '~/utils/types'
 
 defineProps<{ title: string, tasks: Task[] }>()
 defineEmits<{
-  (e: 'deleteTask', id: string): void
+  (e: 'clickTask', task: Task): void,
+  (e: 'deleteTask', id: string): void,
 }>()
 </script>
 
@@ -14,7 +15,7 @@ defineEmits<{
     <ul>
       <template v-for="task in tasks" :key="task.id">
         <li>
-          <TaskView v-bind="task" @delete="id => $emit('deleteTask', id)" />
+          <TaskView v-bind="task" @click="$emit('clickTask', task)" @delete="id => $emit('deleteTask', id)" />
         </li>
       </template>
     </ul>

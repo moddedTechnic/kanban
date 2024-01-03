@@ -3,6 +3,7 @@ import ListView from '~/components/ListView.vue'
 import MultiSelect from '~/components/MultiSelect.vue'
 import IconAdd from '~/components/icons/add.vue'
 import NewTaskModal from '~/components/modals/NewTask.vue'
+import TaskDetailsModal from '~/components/modals/TaskDetails.vue'
 
 import { useStore } from '~/utils/storage'
 import type { Task } from '~/utils/types'
@@ -42,6 +43,7 @@ function deleteTask(id: string) {
 }
 
 const showNewTask = ref(false)
+
 function createTask({ status, ...partial }: Omit<Task, 'id'>) {
   let statusId = statuses.find(s => s.name === status)?.id
   if (!statusId) {
@@ -50,6 +52,21 @@ function createTask({ status, ...partial }: Omit<Task, 'id'>) {
   }
   list.push({ ...partial, status: statusId, id: crypto.randomUUID() })
 }
+
+function updateTask({ id, status, ...rest }: Task) {
+  const index = list.findIndex(task => task.id === id)
+  list.splice(index, 1)
+
+  let statusId = statuses.find(s => s.name === status)?.id
+  if (!statusId) {
+    statusId = crypto.randomUUID()
+    statuses.push({ id: statusId, name: status })
+  }
+
+  list.push({ id, status: statusId, ...rest })
+}
+
+const activeTaskDetails = ref<Task | undefined>(undefined)
 </script>
 
 <template>
@@ -71,13 +88,16 @@ function createTask({ status, ...partial }: Omit<Task, 'id'>) {
     <div v-else class="board">
       <template v-for="status in statuses" :key="status">
         <template v-if="tasksByStatus[status.id]?.length > 0">
-          <ListView :title="status.name" :tasks="tasksByStatus[status.id]" @delete-task="deleteTask" />
+          <ListView :title="status.name" :tasks="tasksByStatus[status.id]" @click-task="task => activeTaskDetails = task"
+            @delete-task="deleteTask" />
         </template>
       </template>
     </div>
 
     <NewTaskModal :open="showNewTask" :available-tags="tags" :available-statuses="statuses" @close="showNewTask = false"
       @create-task="createTask" />
+    <TaskDetailsModal :task="activeTaskDetails" :available-tags="tags" :available-statuses="statuses"
+      @close="activeTaskDetails = undefined" @update-task="updateTask" />
 
     <footer>
       <p>
