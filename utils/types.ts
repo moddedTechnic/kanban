@@ -1,8 +1,11 @@
 export type Item = {
+  id: string,
   status: string,
   title: string,
-  id: string,
   tags: string[]
 }
 
-export default {}
+export type Status = {
+  id: string,
+  name: string,
+}

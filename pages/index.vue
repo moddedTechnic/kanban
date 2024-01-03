@@ -1,40 +1,14 @@
 <script setup lang="ts">
 import ListView from '~/components/ListView.vue'
 import MultiSelect from '~/components/MultiSelect.vue'
+import IconAdd from '~/components/icons/add.vue'
+import NewItemModal from '~/components/modals/NewItem.vue'
+
+import { useStore } from '~/utils/storage'
 import { type Item } from '~/utils/types'
 
-const statuses = [
-  'To Do',
-  'In Progress',
-  'Done',
-]
-
-const list: Item[] = reactive([
-  {
-    status: 'To Do',
-    title: 'Serialize',
-    id: '0000',
-    tags: ['backend', 'filesystem']
-  },
-  {
-    status: 'In Progress',
-    title: 'Display KanBan',
-    id: '0001',
-    tags: ['frontend', 'board']
-  },
-  {
-    status: 'Done',
-    title: 'Create test items',
-    id: '0002',
-    tags: ['test']
-  },
-  {
-    status: 'To Do',
-    title: 'Vary tag colours more',
-    id: '0003',
-    tags: ['frontend', 'colours']
-  }
-])
+const statuses = useStore('statuses')
+const list = useStore('tasks')
 
 const tags = computed(() => {
   const tags: string[] = []
@@ -64,11 +38,23 @@ function deleteItem(id: string) {
     list.splice(index, 1)
   }
 }
+
+const showNewItem = ref(false)
+function createItem({ status, ...partial }: Omit<Item, 'id'>) {
+  let statusId = statuses.find(s => s.name === status)?.id
+  if (!statusId) {
+    statusId = crypto.randomUUID()
+    statuses.push({ id: statusId, name: status })
+  }
+  list.push({ ...partial, status: statusId, id: crypto.randomUUID() })
+}
 </script>
 
 <template>
   <main>
     <div class="controls">
+      <IconAdd class="add" :data-open="showNewItem" @click.prevent="showNewItem = !showNewItem" />
+
       <div class="tag-filter">
         <label for="filter-tags">Tags</label>
         <MultiSelect id="filter-tags" v-model="activeTags" :options="tags" />
@@ -82,11 +68,14 @@ function deleteItem(id: string) {
     </div>
     <div v-else class="board">
       <template v-for="status in statuses" :key="status">
-        <template v-if="itemsByStatus[status]?.length > 0">
-          <ListView :title="status" :items="itemsByStatus[status]" @delete-item="deleteItem" />
+        <template v-if="itemsByStatus[status.id]?.length > 0">
+          <ListView :title="status.name" :items="itemsByStatus[status.id]" @delete-item="deleteItem" />
         </template>
       </template>
     </div>
+
+    <NewItemModal :open="showNewItem" :available-tags="tags" :available-statuses="statuses" @close="showNewItem = false"
+      @create-item="createItem" />
   </main>
 </template>
 
@@ -119,6 +108,22 @@ main {
   align-items: center;
   justify-content: flex-start;
   gap: 0.5rem;
+}
+
+.add {
+  cursor: pointer;
+  fill: hsl(0 70% 100%);
+  transform: rotate(0deg);
+  transition: transform 175ms ease-in-out, opacity 175ms ease-in-out;
+}
+
+.add:hover {
+  fill: hsl(120deg 70% 70%);
+  transform: rotate(180deg);
+}
+
+.add[data-open="true"] {
+  opacity: 0;
 }
 
 .blank-board {

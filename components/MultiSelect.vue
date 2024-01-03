@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 
 import Tag from './Tag.vue'
 
-const props = defineProps<{ options: string[] }>()
+const props = defineProps<{ id: string, options: string[] }>()
 
 const selected = defineModel<string[]>()
 const unselected = computed(() => props.options.filter(o => !selected.value?.includes(o)))
@@ -33,8 +33,8 @@ function keypress(event: KeyboardEvent) {
 
 <template>
   <div>
-    <div class="select" @click="optionInput?.focus">
-      <datalist id="options">
+    <div :id="id" class="select" @click="optionInput?.focus">
+      <datalist :id="`${id}-options`">
         <template v-for="option in unselected" :key="option">
           <option :value="option" />
         </template>
@@ -45,7 +45,7 @@ function keypress(event: KeyboardEvent) {
           <Tag :name="s" @click="deselect(s)" />
         </template>
         <form @submit.prevent="freeSelect">
-          <input ref="optionInput" v-model="freeTagInput" type="search" list="options" @keydown="keypress">
+          <input ref="optionInput" v-model="freeTagInput" type="search" :list="`${id}-options`" @keydown="keypress">
         </form>
       </div>
     </div>
