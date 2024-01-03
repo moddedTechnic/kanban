@@ -11,7 +11,9 @@ const unselected = computed(() => props.options.filter(o => !selected.value?.inc
 const optionInput = ref<HTMLInputElement | null>(null)
 const freeTagInput = ref('')
 function freeSelect() {
-  selected.value?.push(freeTagInput.value)
+  if (freeTagInput.value) {
+    selected.value?.push(freeTagInput.value)
+  }
   freeTagInput.value = ''
   optionInput.value?.focus()
 }
@@ -27,6 +29,11 @@ function deselect(option: string) {
 function keypress(event: KeyboardEvent) {
   if (event.key === 'Backspace' && !freeTagInput.value) {
     selected.value?.pop()
+    return
+  }
+  if (event.key === ' ' || event.key === ',' || event.key === ';') {
+    freeSelect()
+    event.preventDefault()
   }
 }
 </script>
