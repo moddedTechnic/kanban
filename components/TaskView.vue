@@ -2,9 +2,9 @@
 import IconClose from '~/components/icons/close.vue'
 import Tag from '~/components/Tag.vue'
 
-import { type Item } from '~/utils/types'
+import type { Task } from '~/utils/types'
 
-defineProps<Item>()
+defineProps<Task>()
 defineEmits<{
   (e: 'delete', id: string): void
 }>()

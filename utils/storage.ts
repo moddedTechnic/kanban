@@ -1,8 +1,8 @@
-import type { Item, Status } from './types'
+import type { Task, Status } from './types'
 
 type Stores = 'tasks' | 'statuses'
 
-export function save(store: 'tasks', value: Item[]): void;
+export function save(store: 'tasks', value: Task[]): void;
 export function save(store: 'statuses', value: Status[]): void;
 export function save(store: Stores, value: any) {
   if (process.client) {
@@ -10,7 +10,7 @@ export function save(store: Stores, value: any) {
   }
 }
 
-export function load(store: 'tasks'): Item[];
+export function load(store: 'tasks'): Task[];
 export function load(store: 'statuses'): Status[];
 export function load(store: Stores) {
   if (process.server) {
@@ -22,7 +22,7 @@ export function load(store: Stores) {
       orelse = [] as Status[]
       break
     case 'tasks':
-      orelse = [] as Item[]
+      orelse = [] as Task[]
       break
   }
   return JSON.parse(
@@ -30,9 +30,9 @@ export function load(store: Stores) {
   ) ?? orelse
 }
 
-export function useStore(name: 'tasks'): Item[];
+export function useStore(name: 'tasks'): Task[];
 export function useStore(name: 'statuses'): Status[];
-export function useStore(name: Stores): Item[] | Status[] {
+export function useStore(name: Stores): Task[] | Status[] {
   // @ts-ignore
   const store = reactive(load(name))
   // @ts-ignore

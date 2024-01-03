@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 
 import MultiSelect from '~/components/MultiSelect.vue'
-import type { Item, Status } from '~/utils/types'
+import type { Task, Status } from '~/utils/types'
 
 const props = defineProps<{
   open: boolean,
@@ -11,7 +11,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'createItem', item: Omit<Item, 'id'>): void
+  (e: 'createTask', Task: Omit<Task, 'id'>): void
 }>()
 
 const modal = ref<HTMLDialogElement | undefined>()
@@ -35,7 +35,7 @@ const status = ref('')
 const tags = ref<string[]>([])
 
 function submit() {
-  emit('createItem', {
+  emit('createTask', {
     title: title.value,
     tags: tags.value,
     status: status.value

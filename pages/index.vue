@@ -2,10 +2,10 @@
 import ListView from '~/components/ListView.vue'
 import MultiSelect from '~/components/MultiSelect.vue'
 import IconAdd from '~/components/icons/add.vue'
-import NewItemModal from '~/components/modals/NewItem.vue'
+import NewTaskModal from '~/components/modals/NewTask.vue'
 
 import { useStore } from '~/utils/storage'
-import { type Item } from '~/utils/types'
+import type { Task } from '~/utils/types'
 
 const statuses = useStore('statuses')
 const list = useStore('tasks')
@@ -14,35 +14,35 @@ const year = computed(() => new Date().getFullYear())
 
 const tags = computed(() => {
   const tags: string[] = []
-  list.forEach(item => item.tags.forEach(
+  list.forEach(task => task.tags.forEach(
     tag => tags.includes(tag) ? undefined : tags.push(tag))
   )
   return tags
 })
 const activeTags = reactive<string[]>([])
 
-const itemsByStatus = computed(() => {
-  const itemsByStatus: Record<string, Item[]> = {}
-  for (const item of list) {
-    if (!itemsByStatus[item.status]) {
-      itemsByStatus[item.status] = []
+const tasksByStatus = computed(() => {
+  const tasksByStatus: Record<string, Task[]> = {}
+  for (const task of list) {
+    if (!tasksByStatus[task.status]) {
+      tasksByStatus[task.status] = []
     }
-    if (activeTags.length === 0 || activeTags.map(tag => item.tags.includes(tag)).reduce((a, b) => a || b, false)) {
-      itemsByStatus[item.status].push(item)
+    if (activeTags.length === 0 || activeTags.map(tag => task.tags.includes(tag)).reduce((a, b) => a || b, false)) {
+      tasksByStatus[task.status].push(task)
     }
   }
-  return itemsByStatus
+  return tasksByStatus
 })
 
-function deleteItem(id: string) {
-  const index = list.findIndex(item => item.id === id)
+function deleteTask(id: string) {
+  const index = list.findIndex(task => task.id === id)
   if (index !== -1) {
     list.splice(index, 1)
   }
 }
 
-const showNewItem = ref(false)
-function createItem({ status, ...partial }: Omit<Item, 'id'>) {
+const showNewTask = ref(false)
+function createTask({ status, ...partial }: Omit<Task, 'id'>) {
   let statusId = statuses.find(s => s.name === status)?.id
   if (!statusId) {
     statusId = crypto.randomUUID()
@@ -55,7 +55,7 @@ function createItem({ status, ...partial }: Omit<Item, 'id'>) {
 <template>
   <main>
     <div class="controls">
-      <IconAdd class="add" :data-open="showNewItem" @click.prevent="showNewItem = !showNewItem" />
+      <IconAdd class="add" :data-open="showNewTask" @click.prevent="showNewTask = !showNewTask" />
 
       <div class="tag-filter">
         <label for="filter-tags">Tags</label>
@@ -65,19 +65,19 @@ function createItem({ status, ...partial }: Omit<Item, 'id'>) {
 
     <div v-if="list.length === 0" class="blank-board">
       <p>
-        No items to show
+        No tasks to show
       </p>
     </div>
     <div v-else class="board">
       <template v-for="status in statuses" :key="status">
-        <template v-if="itemsByStatus[status.id]?.length > 0">
-          <ListView :title="status.name" :items="itemsByStatus[status.id]" @delete-item="deleteItem" />
+        <template v-if="tasksByStatus[status.id]?.length > 0">
+          <ListView :title="status.name" :tasks="tasksByStatus[status.id]" @delete-task="deleteTask" />
         </template>
       </template>
     </div>
 
-    <NewItemModal :open="showNewItem" :available-tags="tags" :available-statuses="statuses" @close="showNewItem = false"
-      @create-item="createItem" />
+    <NewTaskModal :open="showNewTask" :available-tags="tags" :available-statuses="statuses" @close="showNewTask = false"
+      @create-task="createTask" />
 
     <footer>
       <p>
