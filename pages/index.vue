@@ -10,6 +10,8 @@ import { type Item } from '~/utils/types'
 const statuses = useStore('statuses')
 const list = useStore('tasks')
 
+const year = computed(() => new Date().getFullYear())
+
 const tags = computed(() => {
   const tags: string[] = []
   list.forEach(item => item.tags.forEach(
@@ -76,6 +78,15 @@ function createItem({ status, ...partial }: Omit<Item, 'id'>) {
 
     <NewItemModal :open="showNewItem" :available-tags="tags" :available-statuses="statuses" @close="showNewItem = false"
       @create-item="createItem" />
+
+    <footer>
+      <p>
+        This site uses cookies to store your to-do list
+      </p>
+      <p>
+        &copy; Jonathan Leeming {{ year }}
+      </p>
+    </footer>
   </main>
 </template>
 
@@ -90,6 +101,20 @@ main {
 
   width: 100vw;
   height: 100vh;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  padding-block: 0.5rem;
+}
+
+footer>* {
+  margin-block: 0.5rem 0;
+  margin-inline: auto;
 }
 
 .controls {
@@ -144,6 +169,7 @@ main {
   justify-content: flex-start;
   gap: 1.5rem;
 
+  flex-grow: 999;
   margin-top: 2rem;
   padding-inline: 1rem;
   padding-bottom: 1rem;
