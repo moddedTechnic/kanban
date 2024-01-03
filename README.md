@@ -1,49 +1,31 @@
-# kanban-app
+# KanBan
 
-This is a [sidebase merino](https://sidebase.io/) app created by running `npm create sidebase@latest`. This project uses the following technologies for a great developer- and user-experience:
-- [TypeScript](https://www.typescriptlang.org/)
-- [Nuxt 3](https://nuxt.com)
+KanBan is a system for creating to-do lists and KanBan boards.
 
+## Usage
 
-## How to get going?
+Visit [kanban.leeming.dev](https://kanban.leeming.dev). Click the `+` in the top left to create a new to-do item. Give it a title, a status, and optionally some tags and hit create!
 
-This is a straight-forward setup with minimal templating and scaffolding. The options you selected during the sidebase CLI setup are all here though. Good places to continue reading are:
-- [the First Steps documentation](https://sidebase.io/sidebase/usage)
-- [our discord](https://discord.gg/auc8eCeGzx)
+Delete a task by clicking the `x` in the top right.
 
-Some tasks you should probably do in the beginning are:
-- [ ] replace this generic README with a more specific one
-- [ ] install the Vue Volar extension
-- [ ] enable [Volar takeover mode](https://nuxt.com/docs/getting-started/installation#prerequisites) to ensure a smooth editor setup
-- [ ] [install Nuxt 3 devtools](https://github.com/nuxt/devtools#installation) if you want to use them
+Filter by tags in the top box.
 
+## Installation
 
-### Setup
+To self-host, first clone the repository, install dependencies, and run with `npm run dev`.
 
-Make sure to install the dependencies:
-
-```bash
+```sh
+git clone git@github.com:moddedTechnic/kanban.git
+cd kanban
 npm install
-```
-
-### Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
 npm run dev
 ```
 
-### Production
+## Contributing
 
-Build the application for production:
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
 
-```bash
-npm run build
-```
+## License
 
-Locally preview production build:
-
-```bash
-npm run preview
-```
+[Mozilla Public License](https://choosealicense.com/licenses/mpl-2.0/)
