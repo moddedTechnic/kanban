@@ -2,7 +2,8 @@
 import { ref, watch } from 'vue'
 
 import MultiSelect from '~/components/MultiSelect.vue'
-import type { Item, Status } from '~/utils/types'
+import IconClose from '~/components/icons/close.vue'
+import type { Task, Status } from '~/utils/types'
 
 const props = defineProps<{
   open: boolean,
@@ -11,7 +12,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'close'): void,
-  (e: 'createItem', item: Omit<Item, 'id'>): void
+  (e: 'createTask', task: Omit<Task, 'id'>): void
 }>()
 
 const modal = ref<HTMLDialogElement | undefined>()
@@ -35,7 +36,7 @@ const status = ref('')
 const tags = ref<string[]>([])
 
 function submit() {
-  emit('createItem', {
+  emit('createTask', {
     title: title.value,
     tags: tags.value,
     status: status.value
@@ -55,28 +56,33 @@ function submit() {
         <option :value="s.name" />
       </template>
     </datalist>
-    <form @submit.prevent="submit">
-      <label for="title">
-        Title
-      </label>
-      <input id="title" v-model="title" type="text">
 
-      <label for="status">
-        Status
-      </label>
-      <input id="status" v-model="status" type="search" list="statuses">
+    <div class="wrapper">
+      <IconClose class="close" @click.prevent="$emit('close')" />
 
-      <label for="tags">
-        Tags
-      </label>
-      <MultiSelect id="tags" v-model="tags" :options="availableTags" />
+      <form @submit.prevent="submit">
+        <label for="title">
+          Title
+        </label>
+        <input id="title" v-model="title" type="text">
 
-      <div />
+        <label for="status">
+          Status
+        </label>
+        <input id="status" v-model="status" type="search" list="statuses">
 
-      <button type="submit">
-        Create
-      </button>
-    </form>
+        <label for="tags">
+          Tags
+        </label>
+        <MultiSelect id="tags" v-model="tags" :options="availableTags" />
+
+        <div />
+
+        <button type="submit">
+          Create
+        </button>
+      </form>
+    </div>
   </dialog>
 </template>
 
@@ -94,13 +100,44 @@ dialog {
   padding: 0;
 }
 
-form {
+dialog>.wrapper {
   background-color: #fff2;
   padding: 1rem;
+  padding-top: 0.25rem;
+}
+
+.close {
+  display: block;
+
+  height: 2rem;
+  margin-bottom: 0.5rem;
+  margin-left: auto;
+  transform: rotate(0deg);
+
+  cursor: pointer;
+  fill: hsl(0 70% 100%);
+
+  transition: fill 175ms ease-in-out, transform 175ms ease-in-out;
+}
+
+.close:hover {
+  transform: rotate(180deg);
+  fill: hsl(0 70% 70%);
+}
+
+form {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 1rem 0.5rem;
+  gap: 1rem 0.75rem;
   place-items: center;
+}
+
+form> :nth-child(2n) {
+  justify-self: start;
+}
+
+form> :nth-child(2n + 1) {
+  justify-self: end;
 }
 
 input {

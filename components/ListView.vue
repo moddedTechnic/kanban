@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import ItemView from '~/components/ItemView.vue'
-import { type Item } from '~/utils/types'
+import TaskView from '~/components/TaskView.vue'
+import type { Task } from '~/utils/types'
 
-defineProps<{ title: string, items: Item[] }>()
+defineProps<{ title: string, tasks: Task[] }>()
 defineEmits<{
-  (e: 'deleteItem', id: string): void
+  (e: 'clickTask', task: Task): void,
+  (e: 'deleteTask', id: string): void,
 }>()
 </script>
 
@@ -12,9 +13,9 @@ defineEmits<{
   <section class="list">
     <h2>{{ title }}</h2>
     <ul>
-      <template v-for="item in items" :key="item.id">
+      <template v-for="task in tasks" :key="task.id">
         <li>
-          <ItemView v-bind="item" @delete="id => $emit('deleteItem', id)" />
+          <TaskView v-bind="task" @click="$emit('clickTask', task)" @delete="id => $emit('deleteTask', id)" />
         </li>
       </template>
     </ul>
