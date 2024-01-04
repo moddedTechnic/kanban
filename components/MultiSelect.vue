@@ -49,7 +49,7 @@ function keypress(event: KeyboardEvent) {
 
       <div class="selected">
         <template v-for="s in selected" :key="s">
-          <Tag :name="s" @click="deselect(s)" />
+          <Tag class="tag" :name="s" @click="deselect(s)" />
         </template>
         <form @submit.prevent="freeSelect">
           <input ref="optionInput" v-model="freeTagInput" type="search" :list="`${id}-options`" @keydown="keypress">
@@ -82,5 +82,9 @@ input[type="search"] {
   border: none;
   outline: none;
   width: 100%;
+}
+
+.tag {
+  cursor: pointer;
 }
 </style>

@@ -32,6 +32,8 @@ article {
   background-color: #fff2;
   border-radius: 4px;
 
+  cursor: pointer;
+
   transition: background-color 175ms ease-in-out;
 }
 
@@ -61,9 +63,6 @@ h3 {
 }
 
 .delete {
-  /* position: absolute; */
-  /* top: 0.5rem; */
-  /* right: 0.125rem; */
   height: 1.5rem;
   transform: rotate(0deg);
 
